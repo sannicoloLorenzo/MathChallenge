@@ -1,6 +1,7 @@
 
 import java.util.Scanner;
 import java.util.function.DoubleBinaryOperator;
+import java.util.InputMismatchException;
 import java.util.Random;
 public class MathChallenge
 {
@@ -16,54 +17,102 @@ public class MathChallenge
 		static int num2;
 		static int countmolt=0;
 		static double moltipilicatore=1;
+		static int ndom=1;
+		static Scanner in=new Scanner(System.in);
 		static Random random=new Random();
+		static boolean practiceMode=false;
 	public static void main(String[] args) {
-		Scanner in=new Scanner(System.in);
-		
-		vite=3;
-		score=0;
+
 		int answ;
-		int ndom=1;
 		int res;
 		int level=2;
 		int newVita=10;
 		boolean nextLv1=false;
 		boolean nextLv2=false;
-		int mTime=25000;
+		int mTime;
+		vite=0;
+		score=0;
 
 		System.out.println("\n"+ANSI_CYAN+"SFIDA MATEMATICA!"+ANSI_RESET);
-		System.out.println("Hai a disposizione "+(mTime/1000)+" secondi per risopndere ad ogni domanda!\n");
-		sleep(4000);
-		while(vite!=0){
+		int scelta;
+		boolean sc=false;
+		while(!sc){
+			System.out.println("Inserire:\n - 1 per avviare il gioco;\n - 2 per entrare nella modalità di pratica (niente tempo e vite infinite);\n - 3 per terminare il programma");
+			try{
+				scelta=in.nextInt();
+				switch(scelta){
+					case 1:
+						mTime=25000;
+						vite=3;
+						sc=true;
+						System.out.println("Hai a disposizione "+(mTime/1000)+" secondi per risopndere ad ogni domanda!");
+						System.out.println("L'inserimento di testo come risposta verrà considerata come rispostà errata, comportando la perdità di una vita ed i vantaggi acquisiti!\n");
+						sleep(5000);
+						break;
+					case 2:
+						practiceMode=true;
+						level=4;
+						sc=true;
+						System.out.println(ANSI_CYAN+"MODALITà DI PRATICA"+ANSI_RESET);
+						System.out.println("Inserire in qualsiasi momento del testo (es. a) come risposta per uscire dal gioco!\n");
+						sleep(5000);
+						break;
+					case 3:
+						sc=true;
+						System.out.println("Uscita in corso...\n");
+						break;
+					default:
+						System.out.println(ANSI_RED+"Input non valido"+ANSI_RESET);
+						break;
+				}
+			}catch(InputMismatchException e){
+				System.out.println(ANSI_RED+"Input non valido"+ANSI_RESET);
+				in.nextLine();
+			}
+		}
+	
+		while(vite!=0 || practiceMode){
 		    System.out.println("Domanda numero: "+ndom);
 			int op=random.nextInt(level);
 		    switch(op){
 		        case 0:
 					answ=generateNumber((a, b) -> a + b," + ",100);
-					res=in.nextInt();
-					checkAnswer(res, answ,1);
-		            ndom++;
+					try{
+						res=in.nextInt();
+						checkAnswer(res, answ,1);
+					}catch(InputMismatchException e){
+						stringAnswer();
+					}
 		            break;
 		        case 1:
 		            answ=generateNumber((a, b) -> a - b," - ",100);
-		            res=in.nextInt();
-		            checkAnswer(res, answ,1);
-		            ndom++;
+					try{
+						res=in.nextInt();
+						checkAnswer(res, answ,1);
+					}catch(InputMismatchException e){
+						stringAnswer();
+					}
 		            break;
 				case 2:
 					answ=generateNumber((a, b) -> a * b," x ",20);
-		            res=in.nextInt();
-					checkAnswer(res, answ,2);
-		            ndom++;
+					try{
+						res=in.nextInt();
+						checkAnswer(res, answ,2);
+					}catch(InputMismatchException e){
+						stringAnswer();
+					}
 					break;
 				case 3:
 					answ=generateNumber((a, b) -> a / b," / ",50);
-		            res=in.nextInt();
-					checkAnswer(res, answ,3);
-		            ndom++;
+					try{
+						res=in.nextInt();
+						checkAnswer(res, answ,3);
+					}catch(InputMismatchException e){
+						stringAnswer();
+					}
 					break;
 		    }
-			if(score>=newVita){
+			if(score>=newVita && !practiceMode){
 				vite++;
 				System.out.println(ANSI_CYAN+"TRAGUARDO RAGGIUGNTO!"+ANSI_RESET);
 				System.out.println("punteggio: "+score);
@@ -73,7 +122,7 @@ public class MathChallenge
 				sleep(5000);
 			}
 
-			if(score>10 && !nextLv1){
+			if(score>10 && !nextLv1 && !practiceMode){
 				System.out.println(ANSI_CYAN+"NUOVO LIVELLO RAGGIUGNTO!"+ANSI_RESET);
 				System.out.println("Moltiplicazioni sbloccate, difficolta aumentata...");
 				mTime=20000;
@@ -82,7 +131,7 @@ public class MathChallenge
 				nextLv1=true;
 				sleep(5000);
 			}
-			else if(score>20 && !nextLv2){
+			else if(score>20 && !nextLv2 && practiceMode){
 				System.out.println(ANSI_CYAN+"NUOVO LIVELLO RAGGIUGNTO!"+ANSI_RESET);
 				System.out.println("Divisioni sbloccate, difficolta aumentata...");
 				mTime=15000;
@@ -101,20 +150,27 @@ public class MathChallenge
 	public static void checkAnswer(int res,int answ,int point){
 		if(res==answ){
 		    System.out.println(ANSI_GREEN+"Risposta corretta!"+ANSI_RESET);
-		    fireSerie();
-			score+=point*moltipilicatore;
-			countmolt++;
+			if(!practiceMode){
+				fireSerie();
+				score+=point*moltipilicatore;
+				countmolt++;
+			}
+
 		}else{
 		    System.out.println(ANSI_RED+"Risposta errata!"+ANSI_RESET);
 		    System.out.println("Risposta giusta: "+(answ));
-		    vite--;
-		    System.out.println(ANSI_PURPLE+"Vite rimanenti: "+vite+ANSI_RESET);
-			if(moltipilicatore!=1){
-				System.out.println(ANSI_RED+"Moltiplicatore serie di punti perduto!"+ANSI_RESET);
-				moltipilicatore=1;
-			}	
+			if(!practiceMode){
+				vite--;
+		    	System.out.println(ANSI_PURPLE+"Vite rimanenti: "+vite+ANSI_RESET);
+				if(moltipilicatore!=1){
+					System.out.println(ANSI_RED+"Moltiplicatore serie di punti perduto!"+ANSI_RESET);
+					moltipilicatore=1;
+				}	
 			countmolt=0;
+			}
+
 		}
+		ndom++;
 		sleep(3000);
 	}
 
@@ -156,6 +212,27 @@ public class MathChallenge
 			moltipilicatore=1.25;
 			System.out.println(ANSI_CYAN+"SERIE DI "+countmolt+" RISPOSTE CORRETTE!"+ANSI_RESET);
 			System.out.println("I punti ottenuti verranno moltiplicati x"+moltipilicatore+" !");
+		}
+	}
+
+	public static void stringAnswer(){
+		
+		if(!practiceMode){
+			System.out.println(ANSI_RED+"Non è possibile inserire del testo nella risposta..."+ANSI_RESET);
+			System.out.println("Quest'errore to consterà una vita, stai più attento!");
+			vite--;
+			System.out.println(ANSI_PURPLE+"Vite rimanenti: "+vite+ANSI_RESET);
+			if(moltipilicatore!=1){
+				System.out.println(ANSI_RED+"Moltiplicatore serie di punti perduto!"+ANSI_RESET);
+				moltipilicatore=1;
+			}	
+			countmolt=0;
+			ndom++;
+			in.nextLine();
+			sleep(3000);
+		}else{
+			System.out.println("Uscita in corso...");
+			practiceMode=false;
 		}
 	}
 }
