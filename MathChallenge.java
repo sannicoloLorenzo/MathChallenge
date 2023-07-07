@@ -11,8 +11,8 @@ public class MathChallenge
         final static String ANSI_CYAN = "\u001B[36m";
         final static String ANSI_PURPLE = "\u001B[35m";
 		final static int checkNull = -999999999;
-		static int vite;
-		static double score;
+		static int vite=0;
+		static double score=0;
 		static int num1;
 		static int num2;
 		static int countmolt=0;
@@ -20,18 +20,16 @@ public class MathChallenge
 		static int ndom=1;
 		static Scanner in=new Scanner(System.in);
 		static Random random=new Random();
-		static boolean practiceMode=false;
-	public static void main(String[] args) {
+		static boolean practiceMode=false;		
+		static int answ;
+		static int res;
+		static int level=2;
+		static int newVita=10;
+		static boolean nextLv1=false;
+		static boolean nextLv2=false;
+		static int mTime;
 
-		int answ;
-		int res;
-		int level=2;
-		int newVita=10;
-		boolean nextLv1=false;
-		boolean nextLv2=false;
-		int mTime;
-		vite=0;
-		score=0;
+	public static void main(String[] args) {
 
 		System.out.println("\n"+ANSI_CYAN+"SFIDA MATEMATICA!"+ANSI_RESET);
 		int scelta;
@@ -44,22 +42,23 @@ public class MathChallenge
 					case 1:
 						mTime=25000;
 						vite=3;
-						sc=true;
+						System.out.println(ANSI_CYAN+"\nSFIDA MATEMATICA"+ANSI_RESET);
 						System.out.println("Hai a disposizione "+(mTime/1000)+" secondi per risopndere ad ogni domanda!");
 						System.out.println("L'inserimento di testo come risposta verrà considerata come rispostà errata, comportando la perdità di una vita ed i vantaggi acquisiti!\n");
 						sleep(5000);
+						game();
 						break;
 					case 2:
 						practiceMode=true;
 						level=4;
-						sc=true;
-						System.out.println(ANSI_CYAN+"MODALITà DI PRATICA"+ANSI_RESET);
+						System.out.println(ANSI_CYAN+"\nMODALITÀ DI PRATICA"+ANSI_RESET);
 						System.out.println("Inserire in qualsiasi momento del testo (es. a) come risposta per uscire dal gioco!\n");
 						sleep(5000);
+						game();
 						break;
 					case 3:
 						sc=true;
-						System.out.println("Uscita in corso...\n");
+						System.out.println("\nUscita in corso...\n");
 						break;
 					default:
 						System.out.println(ANSI_RED+"Input non valido"+ANSI_RESET);
@@ -70,7 +69,10 @@ public class MathChallenge
 				in.nextLine();
 			}
 		}
-	
+		in.close();
+	}
+
+	public static void game(){
 		while(vite!=0 || practiceMode){
 		    System.out.println("Domanda numero: "+ndom);
 			int op=random.nextInt(level);
@@ -142,9 +144,9 @@ public class MathChallenge
 			}
 				System.out.println();
 		}
-		in.close();
-	System.out.println(ANSI_RED+"Game Over"+ANSI_RESET);
-	System.out.println("punteggio: "+score);
+		System.out.println(ANSI_RED+"GAME OVER"+ANSI_RESET);
+		System.out.println("punteggio: "+score+"\n");
+		sleep(2000);
 	}
 
 	public static void checkAnswer(int res,int answ,int point){
@@ -168,7 +170,6 @@ public class MathChallenge
 				}	
 			countmolt=0;
 			}
-
 		}
 		ndom++;
 		sleep(3000);
@@ -219,7 +220,7 @@ public class MathChallenge
 		
 		if(!practiceMode){
 			System.out.println(ANSI_RED+"Non è possibile inserire del testo nella risposta..."+ANSI_RESET);
-			System.out.println("Quest'errore to consterà una vita, stai più attento!");
+			System.out.println("Quest'errore ti costerà una vita, stai più attento!");
 			vite--;
 			System.out.println(ANSI_PURPLE+"Vite rimanenti: "+vite+ANSI_RESET);
 			if(moltipilicatore!=1){
